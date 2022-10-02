@@ -1,4 +1,5 @@
 import streamlit as st
+import matplotlib.pyplot as plt
 from fuelling_tools import *
 
 
@@ -75,19 +76,9 @@ if isinstance(entry, pd.Series):
 
 insights = get_insights(entries)
 
-#consumption = insights[["fdate", "consumption"]].dropna()
-#fig, ax = plt.subplots()
-#consumption["consumption"].plot(ax=ax)
-#st.pyplot(fig)
-##st.pyplot(consumption_plot(insights))
-
-import matplotlib.pyplot as plt
-import numpy as np
-
-arr = np.random.normal(1, 1, size=100)
+consumption = insights[["fdate", "consumption"]].dropna()
 fig, ax = plt.subplots()
-ax.hist(arr, bins=20)
-
+consumption["consumption"].plot(ax=ax)
 st.pyplot(fig)
 
 
