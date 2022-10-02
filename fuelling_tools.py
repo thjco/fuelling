@@ -1,6 +1,7 @@
 import sqlite3
 import json
 import pandas as pd
+import matplotlib.pyplot as plt
 from datetime import datetime, date
 
 
@@ -160,7 +161,7 @@ def get_insights(entries):
                 dm = mileage - last_mileage_full
                 if dm != 0:
                     consumption = quantity_sum / dm * 100.0
-                    if consumption > 0:
+                    if consumption > 0.:
                         df.loc[idx, "consumption"] = round(consumption, 1)
 
                     quantity_sum = 0.
@@ -170,3 +171,14 @@ def get_insights(entries):
             last_mileage_full = mileage
 
     return df
+
+def consumption_plot(df):
+    consumption = df[["fdate", "consumption"]].dropna()
+    min_date = datetime.strptime(consumption.fdate.min(), "%Y-%m-%d %H:%M:%S").date()
+    max_date = datetime.strptime(consumption.fdate.max(), "%Y-%m-%d %H:%M:%S").date()
+    xticks = pd.date_range(min_date, max_date, periods=20)
+    fig, ax = plt.subplots()
+    consumption["consumption"].plot(ax=ax)
+    ax.set_xticklabels([x.strftime('%Y-%m-%d') for x in xticks])
+    plt.xticks(rotation=60)
+    return fig

@@ -75,6 +75,12 @@ if isinstance(entry, pd.Series):
 
 insights = get_insights(entries)
 
+consumption = insights[["fdate", "consumption"]].dropna()
+fig, ax = plt.subplots()
+consumption["consumption"].plot(ax=ax)
+st.pyplot(fig)
+#st.pyplot(consumption_plot(insights))
+
 st.dataframe(insights.iloc[::-1])
 
 if st.button("Daten löschen"):
