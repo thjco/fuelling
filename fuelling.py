@@ -75,11 +75,21 @@ if isinstance(entry, pd.Series):
 
 insights = get_insights(entries)
 
-consumption = insights[["fdate", "consumption"]].dropna()
+#consumption = insights[["fdate", "consumption"]].dropna()
+#fig, ax = plt.subplots()
+#consumption["consumption"].plot(ax=ax)
+#st.pyplot(fig)
+##st.pyplot(consumption_plot(insights))
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+arr = np.random.normal(1, 1, size=100)
 fig, ax = plt.subplots()
-consumption["consumption"].plot(ax=ax)
+ax.hist(arr, bins=20)
+
 st.pyplot(fig)
-#st.pyplot(consumption_plot(insights))
+
 
 st.dataframe(insights.iloc[::-1])
 
