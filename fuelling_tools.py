@@ -10,7 +10,7 @@ EXAMPLE_FILE = "fuelling-examples.json"
 ENSURE_FILLING_TABLE_SQL = """
     CREATE TABLE IF NOT EXISTS filling (
         id integer PRIMARY KEY,
-        fdate date NOT NULL,
+        fdate datetime NOT NULL,
         evaluate tinyint(1) NOT NULL DEFAULT '1',
         quantity float NOT NULL,
         full tinyint(1) NOT NULL DEFAULT '1',
@@ -19,6 +19,10 @@ ENSURE_FILLING_TABLE_SQL = """
         station varchar(32) NOT NULL,
         comment varchar(128) NOT NULL
     );
+"""
+
+DROP_FILLING_TABLE = """
+    DROP TABLE IF EXISTS filling;
 """
 
 FILLING_INSERT_SQL = """
@@ -50,6 +54,15 @@ def create_connection(db_file):
 def ensure_tables(conn):
     cur = conn.cursor()
     cur.execute(ENSURE_FILLING_TABLE_SQL)
+    conn.commit()
+
+
+def drop_tables():
+    conn = create_connection(DB_FILE)
+    cur = conn.cursor()
+    cur.execute(DROP_FILLING_TABLE)
+    conn.commit()
+    conn.close()
 
 
 def create_entry(conn, entry):
@@ -92,11 +105,12 @@ def set_example_data():
         entries = json.load(f)
     entries = pd.DataFrame(entries).sort_values("fdate")
 
+    drop_tables()
+
     conn = create_connection(DB_FILE)
-    cur = conn.cursor()
-    cur.execute("DELETE FROM filling")
-    conn.commit()
+    ensure_tables(conn)
 
     for _, entry in entries.iterrows():
         create_entry(conn, entry)
+
     conn.close()

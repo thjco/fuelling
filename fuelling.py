@@ -13,19 +13,14 @@ st.set_page_config(layout="wide")
 st.title("Fuelling")
 
 
-@st.experimental_singleton
-def get_entries():
-    conn = create_connection(DB_FILE)
-    ensure_tables(conn)
-    df = select_all_entries(conn)
-    return df
+conn = create_connection(DB_FILE)
+ensure_tables(conn)
 
-if "entries" not in st.session_state:
-    st.session_state.entries = get_entries()
+entries = select_all_entries(conn)
 
 
 def get_default_entry():
-    data = {"fdate": datetime.today(), "quantity": 0.0, "full": True, "price": 0.0,
+    data = {"fdate": datetime.now(), "quantity": 0.0, "full": True, "price": 0.0,
             "mileage": 0, "station": "", "evaluate": True, "comment": ""}
     return pd.Series(data=data)
 
@@ -33,8 +28,10 @@ def get_default_entry():
 def entry_input(data):
     with st.form("input"):
 
-        # tankdatum
-        fdate = st.date_input("Tankdatum", value=data.fdate)
+        # tankdatum und uhrzeit
+        fdate_date = st.date_input("Tankdatum", value=data.fdate.date()) # value="2022/10/02") #
+        fdate_time = st.time_input("Tankzeit", value=data.fdate.time())
+        fdate = str(datetime.combine(fdate_date, fdate_time))
 
         # menge
         quantity = st.number_input("Menge", min_value=0.0, step=0.01, value=data.quantity)
@@ -59,6 +56,7 @@ def entry_input(data):
 
         submitted = st.form_submit_button("Absenden")
         if submitted:
+            # TODO Close connection at this point?
             data = { "fdate": fdate, "quantity": quantity, "full": full=="vollgetankt", "price": price,
                     "mileage": mileage, "station": station, "evaluate": evaluate=="Verbrauch berechnen", "comment": comment }
             return pd.Series(data=data)
@@ -69,20 +67,14 @@ def entry_input(data):
 default_entry = get_default_entry()
 entry = entry_input(default_entry)
 
-
 if isinstance(entry, pd.Series):
-    entry = pd.DataFrame(entry)
-    st.session_state.entries = pd.concat([st.session_state.entries, entry.T], axis=0, ignore_index=True)
+    create_entry(conn, entry)
+    entries = select_all_entries(conn)
 
+st.dataframe(entries.iloc[::-1])
 
-#print(st.session_state.entries)
-#st.write(entries)
-
-
-st.dataframe(st.session_state.entries.iloc[::-1])
-#entries.shape
-
+if st.button("Delete Data"):
+    drop_tables()
 
 if st.button("Demo Data"):
     set_example_data()
-    st.experimental_singleton.clear()
