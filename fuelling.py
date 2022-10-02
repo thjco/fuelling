@@ -10,7 +10,7 @@ from fuelling_tools import *
 
 
 st.set_page_config(layout="wide")
-st.title("Fuelling")
+st.title("Tankwart")
 
 
 conn = create_connection(DB_FILE)
@@ -73,8 +73,8 @@ if isinstance(entry, pd.Series):
 
 st.dataframe(entries.iloc[::-1])
 
-if st.button("Delete Data"):
+if st.button("Daten löschen"):
     drop_tables()
 
-if st.button("Demo Data"):
+if st.button("Beispieldaten"):
     set_example_data()
