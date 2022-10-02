@@ -1,7 +1,7 @@
 import sqlite3
 import json
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, date
 
 
 DB_FILE = "fuelling.db"
@@ -114,3 +114,59 @@ def set_example_data():
         create_entry(conn, entry)
 
     conn.close()
+
+
+def get_insights(entries):
+    df = entries.copy()
+
+    df["consumption"] = None
+    df["price_per_unit"] = None
+    df["distance_per_day"] = None
+
+
+    quantity_sum = 0.
+    last_mileage_full = None
+    last_mileage_entry = None
+    last_date = None
+
+    for idx, row in df.iterrows():
+        quantity = row["quantity"]
+        mileage = row["mileage"]
+
+        # convert string to datetime object
+        fdate = datetime.strptime(row["fdate"], "%Y-%m-%d %H:%M:%S")
+        fdate = fdate.date()
+
+        if quantity != 0:
+            price_per_unit = row["price"] / quantity
+            df.loc[idx, "price_per_unit"] = round(price_per_unit, 3)
+
+        if last_date and last_mileage_entry:
+            # calc mean distance only for different subsequent days
+            days = (fdate - last_date).days
+            if days != 0:
+                distance_per_day = (mileage - last_mileage_entry) / days
+                distance_per_day = int(distance_per_day)
+                if distance_per_day > 0:
+                    df.loc[idx, "distance_per_day"] = distance_per_day
+
+        last_date = fdate
+        last_mileage_entry = mileage
+
+        quantity_sum += quantity
+
+        if row["evaluate"] and last_mileage_full:
+            if row["full"]:
+                dm = mileage - last_mileage_full
+                if dm != 0:
+                    consumption = quantity_sum / dm * 100.0
+                    if consumption > 0:
+                        df.loc[idx, "consumption"] = round(consumption, 1)
+
+                    quantity_sum = 0.
+                last_mileage_full = mileage
+        else:
+            quantity_sum = 0.
+            last_mileage_full = mileage
+
+    return df

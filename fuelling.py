@@ -31,7 +31,9 @@ def entry_input(data):
         # tankdatum und uhrzeit
         fdate_date = st.date_input("Tankdatum", value=data.fdate.date()) # value="2022/10/02") #
         fdate_time = st.time_input("Tankzeit", value=data.fdate.time())
-        fdate = str(datetime.combine(fdate_date, fdate_time))
+        fdate = datetime.combine(fdate_date, fdate_time)
+        fdate = fdate.replace(microsecond=0)
+        fdate = str(fdate)
 
         # menge
         quantity = st.number_input("Menge", min_value=0.0, step=0.01, value=data.quantity)
@@ -71,7 +73,9 @@ if isinstance(entry, pd.Series):
     create_entry(conn, entry)
     entries = select_all_entries(conn)
 
-st.dataframe(entries.iloc[::-1])
+insights = get_insights(entries)
+
+st.dataframe(insights.iloc[::-1])
 
 if st.button("Daten löschen"):
     drop_tables()
