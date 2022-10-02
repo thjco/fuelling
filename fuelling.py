@@ -13,7 +13,7 @@ st.set_page_config(layout="wide")
 st.title("Fuelling")
 
 
-@st.cache
+@st.experimental_singleton
 def get_entries():
     conn = create_connection(DB_FILE)
     ensure_tables(conn)
@@ -73,13 +73,16 @@ entry = entry_input(default_entry)
 if isinstance(entry, pd.Series):
     entry = pd.DataFrame(entry)
     st.session_state.entries = pd.concat([st.session_state.entries, entry.T], axis=0, ignore_index=True)
-else:
-    print("no entry")
+
 
 #print(st.session_state.entries)
 #st.write(entries)
 
 
-
 st.dataframe(st.session_state.entries.iloc[::-1])
 #entries.shape
+
+
+if st.button("Demo Data"):
+    set_example_data()
+    st.experimental_singleton.clear()

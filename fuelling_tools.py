@@ -1,9 +1,11 @@
 import sqlite3
+import json
 import pandas as pd
 from datetime import datetime
 
 
 DB_FILE = "fuelling.db"
+EXAMPLE_FILE = "fuelling-examples.json"
 
 ENSURE_FILLING_TABLE_SQL = """
     CREATE TABLE IF NOT EXISTS filling (
@@ -83,3 +85,18 @@ def get_default_entry():
     data = {"fdate": datetime.today(), "quantity": 0.0, "full": True, "price": 0.0,
             "mileage": 0, "station": "", "evaluate": True, "comment": ""}
     return pd.Series(data=data)
+
+
+def set_example_data():
+    with open(EXAMPLE_FILE) as f:
+        entries = json.load(f)
+    entries = pd.DataFrame(entries).sort_values("fdate")
+
+    conn = create_connection(DB_FILE)
+    cur = conn.cursor()
+    cur.execute("DELETE FROM filling")
+    conn.commit()
+
+    for _, entry in entries.iterrows():
+        create_entry(conn, entry)
+    conn.close()
