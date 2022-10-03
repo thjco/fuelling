@@ -95,4 +95,11 @@ if price_per_unit.shape[0] > 0:
     plt.legend()
     st.pyplot(fig)
 
+distance_per_day = insights[["fdate", "distance_per_day"]].dropna()
+if distance_per_day.shape[0] > 0:
+    fig, ax = plt.subplots()
+    distance_per_day["distance_per_day"].plot(ax=ax)
+    plt.legend()
+    st.pyplot(fig)
+
 st.dataframe(insights.iloc[::-1])
