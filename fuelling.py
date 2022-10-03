@@ -85,6 +85,14 @@ consumption = insights[["fdate", "consumption"]].dropna()
 if consumption.shape[0] > 0:
     fig, ax = plt.subplots()
     consumption["consumption"].plot(ax=ax)
+    plt.legend()
+    st.pyplot(fig)
+
+price_per_unit = insights[["fdate", "price_per_unit"]].dropna()
+if price_per_unit.shape[0] > 0:
+    fig, ax = plt.subplots()
+    price_per_unit["price_per_unit"].plot(ax=ax, color="r")
+    plt.legend()
     st.pyplot(fig)
 
 st.dataframe(insights.iloc[::-1])
