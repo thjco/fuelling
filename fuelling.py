@@ -84,21 +84,21 @@ insights = get_insights(entries)
 consumption = insights[["fdate", "consumption"]].dropna()
 if consumption.shape[0] > 0:
     fig, ax = plt.subplots()
-    ax.plot(consumption["consumption"], label="Verbrauch", color="b")
+    ax.plot(consumption["consumption"], label="Verbrauch", color="b", marker="o", linewidth=2, markersize=6)
     plt.legend()
     st.pyplot(fig)
 
 price_per_unit = insights[["fdate", "price_per_unit"]].dropna()
 if price_per_unit.shape[0] > 0:
     fig, ax = plt.subplots()
-    ax.plot(price_per_unit["price_per_unit"], label="Literpreis", color="r")
+    ax.plot(price_per_unit["price_per_unit"], label="Literpreis", color="r", marker="s", linewidth=2, markersize=6)
     plt.legend()
     st.pyplot(fig)
 
 distance_per_day = insights[["fdate", "distance_per_day"]].dropna()
 if distance_per_day.shape[0] > 0:
     fig, ax = plt.subplots()
-    ax.plot(distance_per_day["distance_per_day"], label="mittlere Tagesdistanz", color="k")
+    ax.plot(distance_per_day["distance_per_day"], label="mittlere Tagesdistanz", color="k", marker="p", linewidth=2, markersize=6)
     plt.legend()
     st.pyplot(fig)
 
