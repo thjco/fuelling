@@ -82,9 +82,9 @@ if isinstance(entry, pd.Series):
 insights = get_insights(entries)
 
 consumption = insights[["fdate", "consumption"]].dropna()
-fig, ax = plt.subplots()
-consumption["consumption"].plot(ax=ax)
-st.pyplot(fig)
-
+if consumption.shape[0] > 0:
+    fig, ax = plt.subplots()
+    consumption["consumption"].plot(ax=ax)
+    st.pyplot(fig)
 
 st.dataframe(insights.iloc[::-1])
