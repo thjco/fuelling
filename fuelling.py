@@ -10,9 +10,14 @@ from fuelling_tools import *
 # - Import-Möglichkeit auch bel leerer Tabelle, initial
 
 
-st.set_page_config(layout="wide")
 st.title("Tankwart")
 
+with st.sidebar:
+    if st.button("Daten löschen"):
+        drop_tables()
+
+    if st.button("Beispieldaten"):
+        set_example_data()
 
 conn = create_connection(DB_FILE)
 ensure_tables(conn)
@@ -83,9 +88,3 @@ st.pyplot(fig)
 
 
 st.dataframe(insights.iloc[::-1])
-
-if st.button("Daten löschen"):
-    drop_tables()
-
-if st.button("Beispieldaten"):
-    set_example_data()
