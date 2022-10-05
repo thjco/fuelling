@@ -101,4 +101,40 @@ with tab_analysis:
         st.pyplot(fig)
 
 with tab_data:
-    st.dataframe(insights.iloc[::-1])
+    def date_only(text):
+        return text.split()[0]
+
+    def format_quantity(value):
+        return f"{value:.2f}"
+
+    def format_price(value):
+        return f"{value:.2f}"
+
+    def format_consumption(value):
+        if value:
+            return f"{value:.2f}"
+        else:
+            return " "
+
+    def format_price_per_unit(value):
+        return f"{value:.3f}"
+
+    def format_distance_per_day(value):
+        if value:
+            return str(value)
+        else:
+            return " "
+
+    table = pd.DataFrame()
+    table["Datum"] = insights.fdate.apply(date_only)
+    table["Ausw"] = insights.evaluate
+    table["Menge"] = insights.quantity.apply(format_quantity)
+    table["voll"] = insights.full
+    table["Preis"] = insights.price.apply(format_price)
+    table["km"] = insights.mileage
+    table["Verbr"] = insights.consumption.apply(format_consumption)
+    table["LPreis"] = insights.price_per_unit.apply(format_price_per_unit)
+    table["TDist"] = insights.distance_per_day.apply(format_distance_per_day)
+    table["Station"] = insights.station
+    table["Kommentar"] = insights.comment
+    st.dataframe(table.iloc[::-1])
