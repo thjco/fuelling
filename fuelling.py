@@ -120,10 +120,10 @@ with tab_data:
         return f"{value:.3f}"
 
     def format_distance_per_day(value):
-        if value:
-            return str(value)
-        else:
-            return " "
+        try:
+            return int(value)
+        except:
+            return 0
 
     table = pd.DataFrame()
     table["Datum"] = insights.fdate.apply(date_only)
