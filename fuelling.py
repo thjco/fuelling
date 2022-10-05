@@ -25,12 +25,6 @@ ensure_tables(conn)
 entries = select_all_entries(conn)
 
 
-def get_default_entry():
-    data = {"fdate": datetime.now(), "quantity": 0.0, "full": True, "price": 0.0,
-            "mileage": 0, "station": "", "evaluate": True, "comment": ""}
-    return pd.Series(data=data)
-
-
 def entry_input(data):
     with st.form("input"):
 
