@@ -10,6 +10,7 @@ from fuelling_tools import *
 # - Import-Möglichkeit auch bel leerer Tabelle, initial
 
 
+st.set_page_config(page_title="Tankwart", initial_sidebar_state="collapsed")
 st.title("Tankwart")
 
 with st.sidebar:
